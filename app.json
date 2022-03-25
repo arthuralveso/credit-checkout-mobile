@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "credit-checkout-mobile",
+    "slug": "credit-checkout-mobile",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "credit-checkout-mobile"
+}
