@@ -1,4 +1,5 @@
 import React from 'react'
+import Card from '../../components/Card'
 import { Container, Header, StepsWrapper, BackIcon, Step, TItleWrapper, CardIcon, TItle, HeaderWrapper } from './styles'
 
 export default function Layout() {
@@ -15,7 +16,11 @@ export default function Layout() {
                         <TItle>Adicione um novo cartão de crédito</TItle>
                     </TItleWrapper>
                 </HeaderWrapper>
+
             </Header>
+
+            <Card />
+
         </Container>
     )
 }
