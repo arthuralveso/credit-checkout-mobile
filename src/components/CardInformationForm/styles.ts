@@ -9,13 +9,33 @@ export const Container = styled.View`
   justify-content: space-between;
 `;
 
+export const ContainerWrapper = styled.View`
+  width: 70%;
+  height: 300px;
+
+  align-items: center;
+  justify-content: space-between;
+`;
 export const InputWrapper = styled.View`
+  width: 100%;
   flex-direction: row;
   justify-content: space-between;
 `;
 
 export const Wrapper = styled.View`
-  width: 170px;
+  width: 45%;
+  align-items: center;
+  justify-content: center;
+`;
+
+
+export const ErrorMessage = styled.Text`
+  color: ${({ theme }) => theme.colors.danger};
+  
+`;
+
+export const InputContainer = styled.View`
+  width: 100%;
 `;
 
 

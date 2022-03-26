@@ -1,10 +1,10 @@
-import { Picker } from '@react-native-picker/picker';
-import React, { useRef, useState } from 'react'
-import { Text, StyleSheet, View } from 'react-native';
+import React, { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { StyleSheet, Text } from 'react-native';
 import { useCardInformation } from '../../contexts/CardInformationContext';
 import Input from '../Forms/Input';
 import { cardNumberMask, cvvMask, expirationDateMask } from './mask';
-import { Button, Container, InputWrapper, Wrapper } from './styles'
+import { Button, Container, ContainerWrapper, ErrorMessage, InputContainer, InputWrapper, Wrapper } from './styles';
 
 
 export interface ICardInformation {
@@ -16,6 +16,7 @@ export interface ICardInformation {
 };
 
 export default function CardInformationForm() {
+    const { register, setValue, handleSubmit, control, reset, formState: { errors } } = useForm<ICardInformation>();
     const { handleToggleInput } = useCardInformation();
     const [cardInformation, setCardInformation] = useState<ICardInformation>({
         cardNumber: '',
@@ -25,78 +26,119 @@ export default function CardInformationForm() {
         cvv: '',
     });
 
+    function onSubmit(data: ICardInformation) {
+        console.log(data)
+    }
 
     return (
         <Container>
-            <Input
-                style={styles.InputBorder}
-                placeholder='Numero do cartão'
-                onChangeText={text => [
-                    handleToggleInput(cardNumberMask(text), 1),
-                    setCardInformation({ ...cardInformation, cardNumber: cardNumberMask(text) })]}
-                keyboardType="number-pad"
-                returnKeyType={'done'}
-                maxLength={19}
-                value={cardInformation.cardNumber}
-            />
+            <ContainerWrapper>
+                <Controller
+                    control={control}
+                    name='cardNumber'
+                    rules={{ required: true }}
+                    render={({ field: { onChange, value } }) => (
+                        <InputContainer>
+                            <Input
+                                placeholder='Numero do cartão'
+                                onChangeText={text => [
+                                    onChange(text),
+                                    handleToggleInput(cardNumberMask(text), 1),
+                                    setCardInformation({ ...cardInformation, cardNumber: cardNumberMask(text) })]}
+                                keyboardType="number-pad"
+                                returnKeyType={'done'}
+                                maxLength={19}
+                                value={cardInformation.cardNumber}
+                            />
+                            {errors.cardNumber && <ErrorMessage>This is required.</ErrorMessage>}
+                        </InputContainer>
+                    )}
+                />
 
+                <Controller
+                    control={control}
+                    name='ownerName'
+                    rules={{ required: true }}
+                    render={({ field: { onChange, value } }) => (
+                        <InputContainer>
+                            <Input
+                                style={styles.InputBorder}
+                                placeholder='Nome do titular'
+                                onChangeText={text => [
+                                    onChange(text),
+                                    handleToggleInput(text, 2),
+                                    setCardInformation({ ...cardInformation, ownerName: text })]}
+                                keyboardType={'default'}
+                                returnKeyType={'done'}
+                                maxLength={19}
+                                value={cardInformation.ownerName}
+                            />
+                            {errors.ownerName && <ErrorMessage>This is required.</ErrorMessage>}
+                        </InputContainer>
+                    )}
+                />
 
-            <Input
-                style={styles.InputBorder}
-                placeholder='Nome do titular'
-                onChangeText={text => [
-                    handleToggleInput(text, 2),
-                    setCardInformation({ ...cardInformation, ownerName: text })]}
-                keyboardType={'default'}
-                returnKeyType={'done'}
-                maxLength={19}
-                value={cardInformation.ownerName}
-            />
+                <InputWrapper>
+                    <Wrapper>
+                        <Controller
+                            control={control}
+                            name='date'
+                            rules={{ required: true }}
+                            render={({ field: { onChange, value } }) => (
+                                <InputContainer>
+                                    <Input
+                                        placeholder='Validade'
+                                        onChangeText={text => [
+                                            onChange(text),
+                                            handleToggleInput(expirationDateMask(text), 3),
+                                            setCardInformation({ ...cardInformation, date: expirationDateMask(text) })]}
+                                        keyboardType="number-pad"
+                                        returnKeyType={'done'}
+                                        maxLength={5}
+                                        value={cardInformation.date}
+                                    />
+                                    {errors.date && <ErrorMessage>This is required.</ErrorMessage>}
+                                </InputContainer>
+                            )}
+                        />
 
-            <InputWrapper>
-                <Wrapper>
-                    <Input
-                        style={styles.InputBorder}
-                        placeholder='Validade'
-                        onChangeText={text => [
-                            handleToggleInput(expirationDateMask(text), 3),
-                            setCardInformation({ ...cardInformation, date: expirationDateMask(text) })]}
-                        keyboardType="number-pad"
-                        returnKeyType={'done'}
-                        maxLength={5}
-                        value={cardInformation.date}
-                    />
-                </Wrapper>
+                    </Wrapper>
 
-                <Wrapper>
-                    <Input
-                        style={styles.InputBorder}
-                        placeholder='CVV'
-                        onChangeText={text =>
-                            setCardInformation({ ...cardInformation, cvv: cvvMask(text) })}
-                        keyboardType="number-pad"
-                        returnKeyType={'done'}
-                        maxLength={3}
-                        value={cardInformation.cvv}
-                    />
-                </Wrapper>
-            </InputWrapper>
+                    <Wrapper>
+                        <Controller
+                            control={control}
+                            name='cvv'
+                            rules={{ required: true }}
+                            render={({ field: { onChange, value } }) => (
+                                <InputContainer>
+                                    <Input
+                                        placeholder='CVV'
+                                        onChangeText={text => [
+                                            onChange(text),
+                                            setCardInformation({ ...cardInformation, cvv: cvvMask(text) })
+                                        ]}
+                                        keyboardType="number-pad"
+                                        returnKeyType={'done'}
+                                        maxLength={3}
+                                        value={cardInformation.cvv}
+                                    />
+                                    {errors.cvv && <ErrorMessage>This is required.</ErrorMessage>}
+                                </InputContainer>
+                            )}
+                        />
 
-            <Button>
-                <Text style={styles.buttonText}>Confirmar</Text>
-            </Button>
+                    </Wrapper>
+                </InputWrapper>
 
-        </Container>
+                <Button onPress={handleSubmit(onSubmit)} >
+                    <Text style={styles.buttonText}>Confirmar</Text>
+                </Button>
+            </ContainerWrapper>
+        </Container >
     )
 }
 
 const styles = StyleSheet.create({
-
-    InputBorder: {
-        borderBottomColor: '#C6C6C6',
-        borderBottomWidth: 2,
-    },
-
     buttonText: {
         color: '#fff',
         fontSize: 14,
