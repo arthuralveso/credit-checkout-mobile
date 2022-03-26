@@ -1,19 +1,29 @@
 import styled from 'styled-components/native';
 
-export const Container = styled.View`
+interface Props {
+    brand: boolean;
+}
+
+export const Container = styled.View.attrs({
+    shadowColor: '#111111',
+    shadowOffset: { height: 8 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+})`
     width: 100%;
     align-items: center;
     justify-content: center;
 `;
 
-export const CardContainer = styled.View`
-    height: 171px;
-    width: 280px;
+export const CardContainer = styled.View<Props>`
+    height: 190px;
+    width: 300px;
     border-radius: 16px;
     padding: 20px;
     position: absolute;
     
-    background-color: #7F0BC8;
+
+    background-color: ${({ brand }) => brand ? "#124768" : "#A8A8A8"};
 
 `;
 
@@ -43,7 +53,7 @@ export const InfoWrapper = styled.View`
     padding-top: 20px;
     flex-direction: row;
     justify-content: space-between;
-    width: 230px;
+    width: 250px;
 `;
 
 export const OwnerName = styled.Text`

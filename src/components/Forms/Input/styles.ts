@@ -10,5 +10,5 @@ export const Container = styled(TextInput).attrs({
   width: 100%;
   height: 20px;
   color: ${({ theme }) => theme.colors.textDark};
-
+  font-size: 18px;
 `;

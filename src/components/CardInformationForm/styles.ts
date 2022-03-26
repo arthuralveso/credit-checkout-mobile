@@ -1,7 +1,7 @@
 import styled from 'styled-components/native';
 
 export const Container = styled.View`
-  margin-top: 130px;
+  margin-top: 160px;
   width: 100%;
   height: 300px;
 
