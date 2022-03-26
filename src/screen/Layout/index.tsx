@@ -1,5 +1,6 @@
 import React from 'react'
 import Card from '../../components/Card'
+import CardInformationForm from '../../components/CardInformationForm'
 import { Container, Header, StepsWrapper, BackIcon, Step, TItleWrapper, CardIcon, TItle, HeaderWrapper } from './styles'
 
 export default function Layout() {
@@ -20,6 +21,8 @@ export default function Layout() {
             </Header>
 
             <Card />
+
+            <CardInformationForm />
 
         </Container>
     )
