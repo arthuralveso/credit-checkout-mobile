@@ -13,7 +13,7 @@ export const CardContainer = styled.View`
     padding: 20px;
     position: absolute;
     
-    background-color: ${({ theme }) => theme.colors.inputColor};
+    background-color: #7F0BC8;
 
 `;
 
@@ -26,13 +26,18 @@ export const CardWrapper = styled.View`
 
 export const CardBrand = styled.Image`
     width: 50px;
-    background-color: aliceblue;
     height: 50px;
-    margin-bottom: 30px;
+    
 `;
 
 
-export const CardNumber = styled.Text``;
+export const CardInformationWrapper = styled.View`
+    margin-top: 30px;
+`;
+
+export const CardNumber = styled.Text`
+    color: #ffffff
+`;
 
 export const InfoWrapper = styled.View`
     padding-top: 20px;
@@ -41,6 +46,10 @@ export const InfoWrapper = styled.View`
     width: 230px;
 `;
 
-export const OwnerName = styled.Text``;
+export const OwnerName = styled.Text`
+color: #ffffff
+`;
 
-export const ExpirationDate = styled.Text``;
+export const ExpirationDate = styled.Text`
+color: #ffffff
+`;

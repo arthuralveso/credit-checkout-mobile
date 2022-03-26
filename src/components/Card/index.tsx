@@ -1,21 +1,26 @@
 import { View, Text } from 'react-native'
 import React from 'react'
-import { Container, CardContainer, CardWrapper, CardBrand, CardNumber, InfoWrapper, OwnerName, ExpirationDate } from './styles'
+import { Container, CardContainer, CardWrapper, CardNumber, InfoWrapper, OwnerName, ExpirationDate, CardInformationWrapper } from './styles'
+import IconVisa from '../../assets/icon-visa.svg'
+import { useCardInformation } from '../../contexts/CardInformationContext';
 
 export default function Card() {
+    const { cardData } = useCardInformation();
+
     return (
         <Container>
             <CardContainer>
                 <CardWrapper>
-                    <CardBrand source={require('../../assets/icon-visa.svg')} />
+                    <IconVisa width={60} height={60} />
 
-                    <View>
-                        <CardNumber>**** **** **** ****</CardNumber>
+
+                    <CardInformationWrapper>
+                        <CardNumber>{cardData.cardNumber}</CardNumber>
                         <InfoWrapper>
-                            <OwnerName>NOME DO TITULAR</OwnerName>
-                            <ExpirationDate>00/00</ExpirationDate>
+                            <OwnerName>{cardData.ownerName}</OwnerName>
+                            <ExpirationDate>{cardData.expirationDate}</ExpirationDate>
                         </InfoWrapper>
-                    </View>
+                    </CardInformationWrapper>
                 </CardWrapper>
             </CardContainer>
 
