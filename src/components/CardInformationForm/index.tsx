@@ -1,6 +1,8 @@
+import { yupResolver } from '@hookform/resolvers/yup';
 import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Keyboard, StyleSheet, Text, TouchableWithoutFeedback } from 'react-native';
+import * as yup from 'yup';
 import { useCardInformation } from '../../contexts/CardInformationContext';
 import Input from '../Forms/Input';
 import { cardNumberMask, cvvMask, expirationDateMask } from './mask';
@@ -10,18 +12,28 @@ import { Button, Container, ContainerWrapper, ErrorMessage, InputContainer, Inpu
 export interface ICardInformation {
     cardNumber: string;
     ownerName: string;
-    date: string;
+    expirationDate: string;
     numberOfInstallments: string;
     cvv: string;
 };
 
+const schema = yup.object({
+    cardNumber: yup.string().min(16, 'Número do cartão inválido').required('Número do cartão inválido'),
+    ownerName: yup.string().max(15).required('Insira seu nome completo'),
+    expirationDate: yup.string().min(5, 'Data inválida').required('Data inválida'),
+    cvv: yup.string().min(3, 'Código inválido').required('Código inválido'),
+    // numberOfInstallments: yup.string().required('Insira o número de parcelas'),
+}).required();
+
 export default function CardInformationForm() {
-    const { register, setValue, handleSubmit, control, reset, formState: { errors } } = useForm<ICardInformation>();
+    const { register, setValue, handleSubmit, control, reset, formState: { errors } } = useForm<ICardInformation>({
+        resolver: yupResolver(schema)
+    });
     const { handleToggleInput } = useCardInformation();
     const [cardInformation, setCardInformation] = useState<ICardInformation>({
         cardNumber: '',
         ownerName: '',
-        date: '',
+        expirationDate: '',
         numberOfInstallments: '',
         cvv: '',
     });
@@ -51,7 +63,7 @@ export default function CardInformationForm() {
                                     maxLength={19}
                                     value={cardInformation.cardNumber}
                                 />
-                                {errors.cardNumber && <ErrorMessage>This is required.</ErrorMessage>}
+                                <ErrorMessage>{errors.cardNumber?.message}</ErrorMessage>
                             </InputContainer>
                         )}
                     />
@@ -73,7 +85,7 @@ export default function CardInformationForm() {
                                     maxLength={19}
                                     value={cardInformation.ownerName}
                                 />
-                                {errors.ownerName && <ErrorMessage>This is required.</ErrorMessage>}
+                                <ErrorMessage>{errors.ownerName?.message}</ErrorMessage>
                             </InputContainer>
                         )}
                     />
@@ -82,7 +94,7 @@ export default function CardInformationForm() {
                         <Wrapper>
                             <Controller
                                 control={control}
-                                name='date'
+                                name='expirationDate'
                                 rules={{ required: true }}
                                 render={({ field: { onChange, value } }) => (
                                     <InputContainer>
@@ -91,13 +103,13 @@ export default function CardInformationForm() {
                                             onChangeText={text => [
                                                 onChange(text),
                                                 handleToggleInput(expirationDateMask(text), 3),
-                                                setCardInformation({ ...cardInformation, date: expirationDateMask(text) })]}
+                                                setCardInformation({ ...cardInformation, expirationDate: expirationDateMask(text) })]}
                                             keyboardType="number-pad"
                                             returnKeyType={'done'}
                                             maxLength={5}
-                                            value={cardInformation.date}
+                                            value={cardInformation.expirationDate}
                                         />
-                                        {errors.date && <ErrorMessage>This is required.</ErrorMessage>}
+                                        <ErrorMessage>{errors.expirationDate?.message}</ErrorMessage>
                                     </InputContainer>
                                 )}
                             />
@@ -122,7 +134,7 @@ export default function CardInformationForm() {
                                             maxLength={3}
                                             value={cardInformation.cvv}
                                         />
-                                        {errors.cvv && <ErrorMessage>This is required.</ErrorMessage>}
+                                        <ErrorMessage>{errors.cvv?.message}</ErrorMessage>
                                     </InputContainer>
                                 )}
                             />
