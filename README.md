@@ -1,10 +1,12 @@
 # Exame - Bexs Front-end"
-    Aplicação mobile desenvolvida com React Native utilizando Expo
+    Aplicação mobile desenvolvida com React Native utilizando Expo, styled-components, react-hook-form e yup
 
 # Pré-requisitos
-    - Yarn ou NPM
-    - Android Studio (SDK - system development kit) Caso queira executar através de um emulador em sua maquina
-    - Expo (para instalação do expo basta seguir a documentação no site oficial [https://docs.expo.dev/](https://docs.expo.dev/)
+
+- Yarn ou NPM
+- Android Studio (SDK - system development kit) Caso queira executar através de um emulador em sua maquina
+- Expo (para instalação do expo basta seguir a documentação no site oficial [https://docs.expo.dev/](https://docs.expo.dev/)
+
 
 
 # Instalação
