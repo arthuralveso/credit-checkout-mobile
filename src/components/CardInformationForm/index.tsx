@@ -1,12 +1,16 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import React, { useState } from 'react';
+import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Keyboard, StyleSheet, Text, TouchableWithoutFeedback } from 'react-native';
+import RNPickerSelect from 'react-native-picker-select';
 import * as yup from 'yup';
 import { useCardInformation } from '../../contexts/CardInformationContext';
 import Input from '../Forms/Input';
 import { cardNumberMask, cvvMask, expirationDateMask } from './mask';
 import { Button, Container, ContainerWrapper, ErrorMessage, InputContainer, InputWrapper, Wrapper } from './styles';
+import axios from "axios";
+import * as Network from 'expo-network';
+import { api } from '../../services/api';
 
 
 export interface ICardInformation {
@@ -22,7 +26,7 @@ const schema = yup.object({
     ownerName: yup.string().max(15).required('Insira seu nome completo'),
     expirationDate: yup.string().min(5, 'Data inválida').required('Data inválida'),
     cvv: yup.string().min(3, 'Código inválido').required('Código inválido'),
-    // numberOfInstallments: yup.string().required('Insira o número de parcelas'),
+    numberOfInstallments: yup.string().required('Insira o número de parcelas'),
 }).required();
 
 export default function CardInformationForm() {
@@ -30,16 +34,17 @@ export default function CardInformationForm() {
         resolver: yupResolver(schema)
     });
     const { handleToggleInput } = useCardInformation();
-    const [cardInformation, setCardInformation] = useState<ICardInformation>({
-        cardNumber: '',
-        ownerName: '',
-        expirationDate: '',
-        numberOfInstallments: '',
-        cvv: '',
-    });
 
-    function onSubmit(data: ICardInformation) {
-        console.log(data)
+    async function onSubmit(data: ICardInformation) {
+        try {
+            // const { data } = await api.post('/post', data);
+
+            console.log(data)
+        } catch (err) {
+            console.log(err)
+        }
+
+
     }
 
     return (
@@ -49,19 +54,18 @@ export default function CardInformationForm() {
                     <Controller
                         control={control}
                         name='cardNumber'
-                        rules={{ required: true }}
                         render={({ field: { onChange, value } }) => (
                             <InputContainer>
                                 <Input
                                     placeholder='Numero do cartão'
                                     onChangeText={text => [
-                                        onChange(text),
+                                        onChange(cardNumberMask(text)),
                                         handleToggleInput(cardNumberMask(text), 1),
-                                        setCardInformation({ ...cardInformation, cardNumber: cardNumberMask(text) })]}
+                                    ]}
                                     keyboardType="number-pad"
                                     returnKeyType={'done'}
                                     maxLength={19}
-                                    value={cardInformation.cardNumber}
+                                    value={value}
                                 />
                                 <ErrorMessage>{errors.cardNumber?.message}</ErrorMessage>
                             </InputContainer>
@@ -71,19 +75,17 @@ export default function CardInformationForm() {
                     <Controller
                         control={control}
                         name='ownerName'
-                        rules={{ required: true }}
                         render={({ field: { onChange, value } }) => (
                             <InputContainer>
                                 <Input
                                     placeholder='Nome do titular'
                                     onChangeText={text => [
                                         onChange(text),
-                                        handleToggleInput(text, 2),
-                                        setCardInformation({ ...cardInformation, ownerName: text })]}
+                                        handleToggleInput(text, 2)]}
                                     keyboardType={'default'}
                                     returnKeyType={'done'}
                                     maxLength={19}
-                                    value={cardInformation.ownerName}
+                                    value={value}
                                 />
                                 <ErrorMessage>{errors.ownerName?.message}</ErrorMessage>
                             </InputContainer>
@@ -95,19 +97,18 @@ export default function CardInformationForm() {
                             <Controller
                                 control={control}
                                 name='expirationDate'
-                                rules={{ required: true }}
                                 render={({ field: { onChange, value } }) => (
                                     <InputContainer>
                                         <Input
                                             placeholder='Validade'
                                             onChangeText={text => [
-                                                onChange(text),
+                                                onChange(expirationDateMask(text)),
                                                 handleToggleInput(expirationDateMask(text), 3),
-                                                setCardInformation({ ...cardInformation, expirationDate: expirationDateMask(text) })]}
+                                            ]}
                                             keyboardType="number-pad"
                                             returnKeyType={'done'}
                                             maxLength={5}
-                                            value={cardInformation.expirationDate}
+                                            value={value}
                                         />
                                         <ErrorMessage>{errors.expirationDate?.message}</ErrorMessage>
                                     </InputContainer>
@@ -120,19 +121,17 @@ export default function CardInformationForm() {
                             <Controller
                                 control={control}
                                 name='cvv'
-                                rules={{ required: true }}
                                 render={({ field: { onChange, value } }) => (
                                     <InputContainer>
                                         <Input
                                             placeholder='CVV'
-                                            onChangeText={text => [
-                                                onChange(text),
-                                                setCardInformation({ ...cardInformation, cvv: cvvMask(text) })
-                                            ]}
+                                            onChangeText={text =>
+                                                onChange(cvvMask(text))
+                                            }
                                             keyboardType="number-pad"
                                             returnKeyType={'done'}
                                             maxLength={3}
-                                            value={cardInformation.cvv}
+                                            value={value}
                                         />
                                         <ErrorMessage>{errors.cvv?.message}</ErrorMessage>
                                     </InputContainer>
@@ -141,6 +140,30 @@ export default function CardInformationForm() {
 
                         </Wrapper>
                     </InputWrapper>
+
+                    <Controller
+                        control={control}
+                        name='numberOfInstallments'
+                        render={({ field: { onChange, value } }) => (
+                            <InputContainer>
+                                <RNPickerSelect
+                                    style={pickerSelectStyles}
+                                    onValueChange={(value) => onChange(value)}
+                                    placeholder={{ label: 'Selecione o numero de parcelas.', value: null }}
+                                    items={[
+                                        { label: '5x R$ 1.000,00 sem juros', value: '5' },
+                                        { label: '4x R$ 1.200,00 sem juros', value: '4' },
+                                        { label: '3x R$ 1.800,00 sem juros', value: '3' },
+                                        { label: '2x R$ 2.500,00 sem juros', value: '2' },
+                                        { label: '1x R$ 5.000,00 sem juros', value: '1' },
+                                    ]}
+                                />
+                                <ErrorMessage>{errors.numberOfInstallments?.message}</ErrorMessage>
+                            </InputContainer>
+                        )}
+                    />
+
+
 
                     <Button onPress={handleSubmit(onSubmit)} >
                         <Text style={styles.buttonText}>Confirmar</Text>
@@ -156,5 +179,20 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 14,
         fontWeight: 'bold',
+    },
+});
+
+const pickerSelectStyles = StyleSheet.create({
+    inputIOS: {
+        borderBottomColor: '#C6C6C6',
+        borderBottomWidth: 2,
+        fontSize: 18,
+        color: '#3C3C3C',
+    },
+    inputAndroid: {
+        borderBottomColor: '#C6C6C6',
+        borderBottomWidth: 2,
+        fontSize: 16,
+        color: '#3C3C3C',
     },
 });
