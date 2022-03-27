@@ -1,5 +1,5 @@
 # Exame - Bexs Front-end"
-    Aplicação mobile desenvolvida com React Native utilizando Expo
+    Aplicação mobile desenvolvida com React Native utilizando Expo, styled-components, react-hook-form e yup
 
 # Pré-requisitos
 
