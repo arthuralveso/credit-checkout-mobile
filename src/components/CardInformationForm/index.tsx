@@ -149,6 +149,7 @@ export default function CardInformationForm() {
                                 <RNPickerSelect
                                     style={pickerSelectStyles}
                                     onValueChange={(value) => onChange(value)}
+                                    useNativeAndroidPickerStyle={false}
                                     placeholder={{ label: 'Selecione o numero de parcelas.', value: null }}
                                     items={[
                                         { label: '5x R$ 1.000,00 sem juros', value: '5' },
